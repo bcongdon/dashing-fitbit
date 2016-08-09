@@ -1,3 +1,5 @@
 :oauth:
-  :consumer_key: xxx
-  :consumer_secret: xxx
+  :client_id: xxx
+  :client_secret: xxx
+  :token: xxx
+

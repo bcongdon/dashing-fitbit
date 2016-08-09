@@ -1,13 +1,17 @@
-require "fitgem"
+require "fitgem_oauth2"
+require 'yaml'
+require 'json'
+require 'active_support/all'
 
 class Fitbit
 
   attr_reader :client, :options, :config
 
   def initialize(options = {})
+    options[:date_format] ||= "%H:%M"
     @options = options
-    @config  = Fitgem::Client.symbolize_keys YAML.load(File.open(".fitbit.yml"))
-    @client  = Fitgem::Client.new config[:oauth].merge!(options)
+    @config  = YAML.load(File.open("../.fitbit.yml"))
+    @client  = FitgemOauth2::Client.new config[:oauth].merge!(options)
   end
 
   def device
@@ -76,7 +80,7 @@ class Fitbit
   private
 
   def devices
-    @devices ||= client.devices
+    @devices ||= client.devices[:body]
   end
 
   def current_device
