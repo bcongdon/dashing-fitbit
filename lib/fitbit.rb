@@ -88,11 +88,11 @@ class Fitbit
   end
 
   def today
-    @today ||= client.activities_on_date("today")
+    @today ||= client.daily_activity_summary(Date.today)
   end
 
   def total
-    @total ||= client.activity_statistics["lifetime"]["total"]
+    @total ||= client.lifetime_stats['lifetime']["total"]
   end
 
   def distance_unit
@@ -108,7 +108,7 @@ class Fitbit
   end
 
   def goals
-    @goals ||= client.goals["goals"]
+    @goals ||= client.goals('daily')["goals"]
   end
 
   def sorted_leaderboard
@@ -145,5 +145,4 @@ class Fitbit
 
     "intensity_#{intensity}"
   end
-
 end
