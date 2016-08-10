@@ -10,7 +10,7 @@ class Fitbit
   def initialize(options = {})
     options[:date_format] ||= "%H:%M"
     @options = options
-    @config  = YAML.load(File.open("../.fitbit.yml"))
+    @config  = YAML.load(File.open(".fitbit.yml"))
     @client  = FitgemOauth2::Client.new config[:oauth].merge!(options)
   end
 
@@ -40,10 +40,11 @@ class Fitbit
   end
 
   def distance
+    print goals['distance']
     distance = {
       today: distance_today,
-      goal:  percentage(distance_today.to_f, goals["distance"].to_f).to_i,
-      total: total["distance"],
+      goal:  percentage(distance_today.to_f, correct_distance(goals["distance"]).to_f).to_i,
+      total: correct_distance(total["distance"]),
       unit:  distance_unit
     }
     distance.merge meter: meter(distance[:goal]), intensity_class: intensity_class(distance[:goal])
@@ -77,6 +78,10 @@ class Fitbit
     devices["errors"].first["message"]
   end
 
+  def correct_distance distance
+    distance_unit == 'miles' ? (distance * 0.621).round(2) : distance
+  end
+
   private
 
   def devices
@@ -100,7 +105,7 @@ class Fitbit
   end
 
   def distance_today
-    summary["distances"].select { |item| item["activity"] == "total" }.first["distance"]
+    correct_distance summary["distances"].select { |item| item["activity"] == "total" }.first["distance"]
   end
 
   def summary
